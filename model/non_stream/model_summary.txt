@@ -1,0 +1,58 @@
+Model: "model"
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #   
+=================================================================
+ input_1 (InputLayer)        [(1, 74, 40)]             0         
+                                                                 
+ tf.expand_dims (TFOpLambda  (1, 74, 1, 40)            0         
+ )                                                               
+                                                                 
+ stream (Stream)             (1, 24, 1, 32)            6400      
+                                                                 
+ activation (Activation)     (1, 24, 1, 32)            0         
+                                                                 
+ stream_1 (Stream)           (1, 24, 1, 32)            0         
+                                                                 
+ depthwise_conv2d (Depthwis  (1, 20, 1, 32)            192       
+ eConv2D)                                                        
+                                                                 
+ conv2d_1 (Conv2D)           (1, 20, 1, 48)            1536      
+                                                                 
+ batch_normalization (Batch  (1, 20, 1, 48)            192       
+ Normalization)                                                  
+                                                                 
+ activation_1 (Activation)   (1, 20, 1, 48)            0         
+                                                                 
+ stream_2 (Stream)           (1, 20, 1, 48)            0         
+                                                                 
+ depthwise_conv2d_1 (Depthw  (1, 13, 1, 48)            432       
+ iseConv2D)                                                      
+                                                                 
+ conv2d_2 (Conv2D)           (1, 13, 1, 48)            2304      
+                                                                 
+ batch_normalization_1 (Bat  (1, 13, 1, 48)            192       
+ chNormalization)                                                
+                                                                 
+ activation_2 (Activation)   (1, 13, 1, 48)            0         
+                                                                 
+ stream_3 (Stream)           (1, 13, 1, 48)            0         
+                                                                 
+ depthwise_conv2d_2 (Depthw  (1, 1, 1, 48)             672       
+ iseConv2D)                                                      
+                                                                 
+ conv2d_3 (Conv2D)           (1, 1, 1, 48)             2304      
+                                                                 
+ batch_normalization_2 (Bat  (1, 1, 1, 48)             192       
+ chNormalization)                                                
+                                                                 
+ activation_3 (Activation)   (1, 1, 1, 48)             0         
+                                                                 
+ flatten (Flatten)           (1, 48)                   0         
+                                                                 
+ dense (Dense)               (1, 1)                    49        
+                                                                 
+=================================================================
+Total params: 14465 (56.50 KB)
+Trainable params: 14177 (55.38 KB)
+Non-trainable params: 288 (1.12 KB)
+_________________________________________________________________
