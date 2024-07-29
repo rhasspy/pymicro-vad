@@ -23,4 +23,4 @@ while audio := get_10ms_of_audio():
 
 ## Building
 
-See `script/build`
+Run `script/setup` to create a virtual environment, then `script/build`

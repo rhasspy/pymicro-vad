@@ -1,0 +1,2 @@
+include python.cpp
+recursive-include micro_vad *

@@ -26,9 +26,9 @@ using Array4d =
 template <typename T, std::size_t Stride, std::size_t Batch,
           std::size_t InputWidth, std::size_t Channels, std::size_t Filters,
           std::size_t FilterWidth>
-void conv_2d(Array4d<T, Batch, InputWidth, 1, Channels> &input,
-             Array4d<T, Filters, FilterWidth, 1, Channels> &filter,
-             Array1d<T, Filters> &bias,
+void conv_2d(const Array4d<T, Batch, InputWidth, 1, Channels> &input,
+             const Array4d<T, Filters, FilterWidth, 1, Channels> &filter,
+             const Array1d<T, Filters> &bias,
              Array4d<T, Batch, (InputWidth - FilterWidth + Stride) / Stride, 1,
                      Filters> &output) {
 
@@ -65,9 +65,9 @@ void conv_2d(Array4d<T, Batch, InputWidth, 1, Channels> &input,
 template <typename T, std::size_t Batch, std::size_t InputWidth,
           std::size_t Channels, std::size_t Filters, std::size_t FilterWidth>
 void conv_2d_s3(
-    Array4d<T, Batch, InputWidth, 1, Channels> &input,
-    Array4d<T, Filters, FilterWidth, 1, Channels> &filter,
-    Array1d<T, Filters> &bias,
+    const Array4d<T, Batch, InputWidth, 1, Channels> &input,
+    const Array4d<T, Filters, FilterWidth, 1, Channels> &filter,
+    const Array1d<T, Filters> &bias,
     Array4d<T, Batch, (InputWidth - FilterWidth + 3) / 3, 1, Filters> &output) {
   conv_2d<T, 3, Batch, InputWidth, Channels, Filters, FilterWidth>(
       input, filter, bias, output);
@@ -77,9 +77,9 @@ void conv_2d_s3(
 template <typename T, std::size_t Batch, std::size_t InputWidth,
           std::size_t Channels, std::size_t Filters, std::size_t FilterWidth>
 void conv_2d_s1(
-    Array4d<T, Batch, InputWidth, 1, Channels> &input,
-    Array4d<T, Filters, FilterWidth, 1, Channels> &filter,
-    Array1d<T, Filters> &bias,
+    const Array4d<T, Batch, InputWidth, 1, Channels> &input,
+    const Array4d<T, Filters, FilterWidth, 1, Channels> &filter,
+    const Array1d<T, Filters> &bias,
     Array4d<T, Batch, (InputWidth - FilterWidth + 1), 1, Filters> &output) {
   conv_2d<T, 1, Batch, InputWidth, Channels, Filters, FilterWidth>(
       input, filter, bias, output);
@@ -95,8 +95,9 @@ void conv_2d_s1(
 template <typename T, std::size_t Batch, std::size_t InputWidth,
           std::size_t Channels, std::size_t Filters, std::size_t FilterWidth>
 void depthwise_conv_2d_s1(
-    Array4d<T, Batch, InputWidth, 1, Channels> &input,
-    Array4d<T, 1, FilterWidth, 1, Channels> &filter, Array1d<T, Filters> &bias,
+    const Array4d<T, Batch, InputWidth, 1, Channels> &input,
+    const Array4d<T, 1, FilterWidth, 1, Channels> &filter,
+    const Array1d<T, Filters> &bias,
     Array4d<T, Batch, InputWidth - FilterWidth + 1, 1, Channels> &output) {
 
   for (std::size_t batch_idx = 0; batch_idx < Batch; ++batch_idx) {
@@ -126,9 +127,10 @@ void depthwise_conv_2d_s1(
  * - Input only varies in final dimension
  * */
 template <typename T, std::size_t Batch, std::size_t Channels>
-void fully_connected(Array4d<T, Batch, 1, 1, Channels> &input,
-                     Array2d<T, Batch, Channels> &weights,
-                     Array1d<T, Batch> &bias, Array2d<T, Batch, 1> &output) {
+void fully_connected(const Array4d<T, Batch, 1, 1, Channels> &input,
+                     const Array2d<T, Batch, Channels> &weights,
+                     const Array1d<T, Batch> &bias,
+                     Array2d<T, Batch, 1> &output) {
   for (std::size_t batch_idx = 0; batch_idx < Batch; ++batch_idx) {
     for (std::size_t channel_idx = 0; channel_idx < Channels; ++channel_idx) {
       output[batch_idx][0] += (input[batch_idx][0][0][channel_idx] *
@@ -141,7 +143,7 @@ void fully_connected(Array4d<T, Batch, 1, 1, Channels> &input,
 
 /* Logistic function. */
 template <typename T> T logistic(T value) {
-  return (T)1 / (1 + std::exp(-value));
+  return T(1) / (1 + std::exp(-value));
 }
 
 } // namespace micro_vad

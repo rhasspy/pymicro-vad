@@ -9,3 +9,8 @@ build
 htmlcov
 
 /.venv/
+/dist/
+.mypy_cache/
+.ipynb_checkpoints/
+*.so
+*.egg-info/

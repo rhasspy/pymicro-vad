@@ -51,7 +51,6 @@ ext_modules = [
     ),
 ]
 
-
 setup(
     name="pymicro_vad",
     version=__version__,

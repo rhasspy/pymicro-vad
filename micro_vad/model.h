@@ -2,7 +2,7 @@
 
 namespace micro_vad {
 
-static Array4d<float, 32, 5, 1, 40> CONV_2D_1_filter = {{
+static const Array4d<float, 32, 5, 1, 40> CONV_2D_1_filter = {{
     {
         -0.110150576,  0.1747083,    -0.01596056,   -0.07920629,
         0.033987366,   -0.051303364, 0.08381779,    0.066501826,
@@ -1539,13 +1539,13 @@ static Array4d<float, 32, 5, 1, 40> CONV_2D_1_filter = {{
     },
 }};
 
-static Array1d<float, 32> CONV_2D_1_bias = {
+static const Array1d<float, 32> CONV_2D_1_bias = {
     0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
     0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
     0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
 };
 
-static Array4d<float, 1, 5, 1, 32> DEPTHWISE_CONV_2D_2_filter = {{
+static const Array4d<float, 1, 5, 1, 32> DEPTHWISE_CONV_2D_2_filter = {{
     {
         0.10255599,   -0.10380701,  -0.19574945,  -0.24037717,  0.20288153,
         -0.07695699,  -0.13606025,  0.1317793,    0.14794426,   -0.18090822,
@@ -1582,7 +1582,7 @@ static Array4d<float, 1, 5, 1, 32> DEPTHWISE_CONV_2D_2_filter = {{
     },
 }};
 
-static Array1d<float, 32> DEPTHWISE_CONV_2D_2_bias = {
+static const Array1d<float, 32> DEPTHWISE_CONV_2D_2_bias = {
     -0.00029868583, 0.0009741203,   -0.001272906,   0.00031654508,
     -0.00016882671, -9.9745404e-05, -0.0011139446,  0.0010945891,
     6.988228e-05,   0.00037566287,  -0.00032405823, -1.1978323e-05,
@@ -1593,7 +1593,7 @@ static Array1d<float, 32> DEPTHWISE_CONV_2D_2_bias = {
     -3.5335634e-05, -0.00089984527, 0.0005980474,   0.00014435353,
 };
 
-static Array4d<float, 48, 1, 1, 32> CONV_2D_3_filter = {{
+static const Array4d<float, 48, 1, 1, 32> CONV_2D_3_filter = {{
     {
         0.104043126,   -0.036232203, 0.074070476,  -0.18035394, 0.07828303,
         0.025067843,   0.08933768,   -0.12414658,  0.20380244,  0.02755521,
@@ -2029,7 +2029,7 @@ static Array4d<float, 48, 1, 1, 32> CONV_2D_3_filter = {{
     },
 }};
 
-static Array1d<float, 48> CONV_2D_3_bias = {
+static const Array1d<float, 48> CONV_2D_3_bias = {
     -0.27367252, 0.08001447,   -1.0288943,   0.9152888,   0.20776954,
     -0.59269696, 0.6478081,    0.57168156,   0.27881148,  0.015676126,
     -0.34494728, 0.10859114,   -0.9273965,   -0.16898848, 0.31087804,
@@ -2042,7 +2042,7 @@ static Array1d<float, 48> CONV_2D_3_bias = {
     -0.1900145,  -0.3592255,   -0.10395699,
 };
 
-static Array4d<float, 1, 8, 1, 48> DEPTHWISE_CONV_2D_4_filter = {{
+static const Array4d<float, 1, 8, 1, 48> DEPTHWISE_CONV_2D_4_filter = {{
     {
         0.2791103,     0.098965354,   -0.03911693,   -0.24545343,
         0.022919046,   0.009959533,   -0.04461792,   0.077891774,
@@ -2143,7 +2143,7 @@ static Array4d<float, 1, 8, 1, 48> DEPTHWISE_CONV_2D_4_filter = {{
     },
 }};
 
-static Array1d<float, 48> DEPTHWISE_CONV_2D_4_bias = {
+static const Array1d<float, 48> DEPTHWISE_CONV_2D_4_bias = {
     0.003209368,    0.0009471827,  0.00071503985,  -0.0025699593, 0.0016860701,
     0.0020910269,   -0.0015158507, -0.0014581608,  -0.0020752416, 0.0022993751,
     0.001521578,    0.0007346184,  -0.0013586544,  -0.001569628,  0.0019231894,
@@ -2156,7 +2156,7 @@ static Array1d<float, 48> DEPTHWISE_CONV_2D_4_bias = {
     0.0014998286,   -0.0014640727, -0.00078790006,
 };
 
-static Array4d<float, 48, 1, 1, 48> CONV_2D_5_filter = {{
+static const Array4d<float, 48, 1, 1, 48> CONV_2D_5_filter = {{
     {
         -1.065089,   0.9912525,   1.2268456,   -0.49418074, 1.2655132,
         -0.37783697, 0.43050775,  0.3160232,   -1.2530087,  -0.46850267,
@@ -2735,7 +2735,7 @@ static Array4d<float, 48, 1, 1, 48> CONV_2D_5_filter = {{
     },
 }};
 
-static Array1d<float, 48> CONV_2D_5_bias = {
+static const Array1d<float, 48> CONV_2D_5_bias = {
     -1.6543245,   0.43764722,  -0.43580392, 0.39907032,   -1.4252682,
     1.5547115,    -0.27024296, 0.7906708,   1.3235778,    -0.5972321,
     -0.022467883, 0.6843005,   -0.13623013, -0.049162216, -0.16037965,
@@ -2748,7 +2748,7 @@ static Array1d<float, 48> CONV_2D_5_bias = {
     -0.5592952,   -0.4832906,  -0.61923605,
 };
 
-static Array4d<float, 1, 13, 1, 48> DEPTHWISE_CONV_2D_6_filter = {{
+static const Array4d<float, 1, 13, 1, 48> DEPTHWISE_CONV_2D_6_filter = {{
     {
         -0.011202416,  0.090272464,   -0.1208348,    0.111177035,
         -0.103302754,  0.22491124,    -0.041576773,  -0.23849574,
@@ -2909,7 +2909,7 @@ static Array4d<float, 1, 13, 1, 48> DEPTHWISE_CONV_2D_6_filter = {{
     },
 }};
 
-static Array1d<float, 48> DEPTHWISE_CONV_2D_6_bias = {
+static const Array1d<float, 48> DEPTHWISE_CONV_2D_6_bias = {
     -0.0019771657,  -0.0021066696,  9.308557e-05,   -0.00032304187,
     0.0018219021,   -0.0013104638,  -0.00085799163, -0.00049538666,
     -0.0016354179,  0.0029271266,   2.7604146e-05,  0.0006216225,
@@ -2924,7 +2924,7 @@ static Array1d<float, 48> DEPTHWISE_CONV_2D_6_bias = {
     -0.00049697986, 0.0023415429,   0.00055867695,  -0.0012001973,
 };
 
-static Array4d<float, 48, 1, 1, 48> CONV_2D_7_filter = {{
+static const Array4d<float, 48, 1, 1, 48> CONV_2D_7_filter = {{
     {
         0.17259881,   0.3146031,    -0.6983093,  -0.41424277,  -0.0018871251,
         -0.122236684, -0.21665499,  -0.04871942, 0.0021489703, -0.50081635,
@@ -3503,7 +3503,7 @@ static Array4d<float, 48, 1, 1, 48> CONV_2D_7_filter = {{
     },
 }};
 
-static Array1d<float, 48> CONV_2D_7_bias = {
+static const Array1d<float, 48> CONV_2D_7_bias = {
     1.219051,   0.27257323,  1.5873796,   0.5131849,   -0.40255758, 0.6315312,
     0.37976676, 0.34121916,  -0.36140355, 0.11377133,  -1.2467332,  0.024006827,
     -1.1412913, -0.74325776, 1.2107562,   -0.9886954,  0.7703041,   1.4959943,
@@ -3514,7 +3514,7 @@ static Array1d<float, 48> CONV_2D_7_bias = {
     0.41837808, 0.60728246,  -0.98476833, 0.23781392,  -1.4378953,  0.25974548,
 };
 
-static Array2d<float, 1, 48> FULLY_CONNECTED_8_weights = {
+static const Array2d<float, 1, 48> FULLY_CONNECTED_8_weights = {
     {-0.13332634,  -0.4014944,  -0.33179417, 0.035387628, -0.40941322,
      -0.10929996,  0.026340876, -0.3710335,  0.12001976,  0.28160402,
      -0.102763504, 0.26024708,  -0.21460263, 0.16125657,  -0.3989763,
@@ -3527,7 +3527,7 @@ static Array2d<float, 1, 48> FULLY_CONNECTED_8_weights = {
      -0.42195868,  -0.3183997,  -0.251549},
 };
 
-static Array1d<float, 1> FULLY_CONNECTED_8_bias = {
+static const Array1d<float, 1> FULLY_CONNECTED_8_bias = {
     -0.065337755,
 };
 
