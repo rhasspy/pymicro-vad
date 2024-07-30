@@ -36,7 +36,7 @@ jobs:
           .venv/bin/python3 -m build --wheel
       - name: install
         run: |
-          .venv/bin/pip3 install --no-index -f . pymicro-vad
+          .venv/bin/pip3 install --no-index -f dist/ pymicro-vad
       - name: test
         run: |
           .venv/bin/pip3 install pytest
