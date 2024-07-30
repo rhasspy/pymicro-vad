@@ -41,3 +41,9 @@ jobs:
         run: |
           .venv/bin/pip3 install pytest
           .venv/bin/pytest -vv tests
+      - name: upload
+        uses: actions/upload-artifact@v3
+        with:
+          name: package
+          path: dist/*.whl
+          if-no-files-found: error
