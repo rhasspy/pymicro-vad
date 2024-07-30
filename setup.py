@@ -44,6 +44,7 @@ ext_modules = [
     Pybind11Extension(
         name="micro_vad_cpp",
         language="c++",
+        cxx_std=17,
         extra_compile_args=flags,
         sources=sorted([str(p) for p in sources] + [str(_DIR / "python.cpp")]),
         define_macros=[("VERSION_INFO", __version__)],
