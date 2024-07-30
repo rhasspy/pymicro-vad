@@ -1,2 +1,3 @@
+include LICENSE.md
 include python.cpp
 recursive-include micro_vad *

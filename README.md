@@ -2,11 +2,21 @@
 
 Self-contained voice activity detector (VAD) that uses the machine learning architecture from [microWakeWord](https://github.com/kahrendt/microWakeWord/).
 
+
+## Installation
+
+``` sh
+pip install pymicro-vad
+```
+
+
+## Usage
+
 ``` python
 from pymicro_vad import MicroVad
 
 vad = MicroVad()
-threshold = 0.9
+threshold = 0.5
 
 # Process 10ms chunks of 16-bit mono PCM @16Khz
 while audio := get_10ms_of_audio():
@@ -23,4 +33,6 @@ while audio := get_10ms_of_audio():
 
 ## Building
 
-Run `script/setup` to create a virtual environment, then `script/build`
+Ensure you have `python3-dev` and `build-essential` installed.
+
+Run `script/setup` to create a virtual environment, then `script/build` to build the extension locally.

@@ -3,10 +3,9 @@ name: wheels
 
 on:
   workflow_dispatch:
-  pull_request: ~
   push:
-    branches:
-      - master
+    tags:
+      - "*"
 
 jobs:
   test:
