@@ -4,7 +4,7 @@
 
 #define FIXED_POINT 16
 namespace kissfft_fixed16 {
-#include "kiss_fft.c"
-#include "tools/kiss_fftr.c"
+#include "kiss_fft.cc"
+#include "tools/kiss_fftr.cc"
 }  // namespace kissfft_fixed16
 #undef FIXED_POINT
