@@ -1,0 +1,7 @@
+*
+!micro_vad/
+!pymicro_vad/*.py
+!pyproject.toml
+!setup.py
+!python.cpp
+!tests/

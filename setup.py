@@ -63,5 +63,5 @@ setup(
     ext_modules=ext_modules,
     zip_safe=False,
     python_requires=">=3.7",
-    classifiers=["License :: OSI Approved :: MIT License"],
+    classifiers=["License :: OSI Approved :: Apache Software License"],
 )

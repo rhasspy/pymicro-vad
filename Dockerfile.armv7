@@ -1,0 +1,135 @@
+# -----------------------------------------------------------------------------
+# Python 3.9
+# -----------------------------------------------------------------------------
+
+FROM python:3.9 as python39
+
+ENV LANG C.UTF-8
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && \
+    apt-get install --yes --no-install-recommends \
+        patchelf
+
+# Build
+WORKDIR /build
+COPY ./ ./
+RUN python3 -m venv venv && \
+    venv/bin/pip3 install --upgrade pip && \
+    venv/bin/pip3 install --upgrade build wheel auditwheel && \
+    venv/bin/python3 -m build --wheel
+RUN find dist -name '*.whl' | xargs venv/bin/auditwheel repair --plat manylinux_2_34_armv7l
+
+# Test
+WORKDIR /test
+COPY ./tests/ ./tests/
+RUN python3 -m venv venv && \
+    venv/bin/pip3 install --upgrade pip && \
+    venv/bin/pip3 install --upgrade wheel pytest && \
+    venv/bin/pip3 install --no-index pymicro-vad -f /build/wheelhouse/ && \
+    venv/bin/pytest tests
+
+# -----------------------------------------------------------------------------
+# Python 3.10
+# -----------------------------------------------------------------------------
+
+FROM python:3.10 as python310
+
+ENV LANG C.UTF-8
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && \
+    apt-get install --yes --no-install-recommends \
+        patchelf
+
+# Build
+WORKDIR /build
+COPY ./ ./
+RUN python3 -m venv venv && \
+    venv/bin/pip3 install --upgrade pip && \
+    venv/bin/pip3 install --upgrade build wheel auditwheel && \
+    venv/bin/python3 -m build --wheel
+RUN find dist -name '*.whl' | xargs venv/bin/auditwheel repair --plat manylinux_2_34_armv7l
+
+# Test
+WORKDIR /test
+COPY ./tests/ ./tests/
+RUN python3 -m venv venv && \
+    venv/bin/pip3 install --upgrade pip && \
+    venv/bin/pip3 install --upgrade wheel pytest && \
+    venv/bin/pip3 install --no-index pymicro-vad -f /build/wheelhouse/ && \
+    venv/bin/pytest tests
+
+# -----------------------------------------------------------------------------
+# Python 3.11
+# -----------------------------------------------------------------------------
+
+FROM python:3.11 as python311
+
+ENV LANG C.UTF-8
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && \
+    apt-get install --yes --no-install-recommends \
+        patchelf
+
+# Build
+WORKDIR /build
+COPY ./ ./
+RUN python3 -m venv venv && \
+    venv/bin/pip3 install --upgrade pip && \
+    venv/bin/pip3 install --upgrade build wheel auditwheel && \
+    venv/bin/python3 -m build --wheel
+
+RUN find dist -name '*.whl' | xargs venv/bin/auditwheel repair --plat manylinux_2_34_armv7l
+
+# Test
+WORKDIR /test
+COPY ./tests/ ./tests/
+RUN python3 -m venv venv && \
+    venv/bin/pip3 install --upgrade pip && \
+    venv/bin/pip3 install --upgrade wheel pytest && \
+    venv/bin/pip3 install --no-index pymicro-vad -f /build/wheelhouse/ && \
+    venv/bin/pytest tests
+
+# -----------------------------------------------------------------------------
+# Python 3.12
+# -----------------------------------------------------------------------------
+
+FROM python:3.12 as python312
+
+ENV LANG C.UTF-8
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && \
+    apt-get install --yes --no-install-recommends \
+        patchelf
+
+# Build
+WORKDIR /build
+COPY ./ ./
+RUN python3 -m venv venv && \
+    venv/bin/pip3 install --upgrade pip && \
+    venv/bin/pip3 install --upgrade build wheel auditwheel && \
+    venv/bin/python3 -m build --wheel
+RUN find dist -name '*.whl' | xargs venv/bin/auditwheel repair --plat manylinux_2_34_armv7l
+
+# Test
+WORKDIR /test
+COPY ./tests/ ./tests/
+RUN python3 -m venv venv && \
+    venv/bin/pip3 install --upgrade pip && \
+    venv/bin/pip3 install --upgrade wheel pytest && \
+    venv/bin/pip3 install --no-index pymicro-vad -f /build/wheelhouse/ && \
+    venv/bin/pytest tests
+
+# -----------------------------------------------------------------------------
+
+FROM scratch
+ARG TARGETARCH
+ARG TARGETVARIANT
+
+COPY --from=python39 /build/dist/*.whl ./
+COPY --from=python310 /build/dist/*.whl ./
+COPY --from=python311 /build/dist/*.whl ./
+COPY --from=python312 /build/dist/*.whl ./

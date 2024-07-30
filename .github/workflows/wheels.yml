@@ -1,0 +1,43 @@
+---
+name: wheels
+
+on:
+  workflow_dispatch:
+  pull_request: ~
+  push:
+    branches:
+      - master
+
+jobs:
+  test:
+    name: "Wheels: Python ${{ matrix.python-version }} on ${{ matrix.os }}"
+    strategy:
+      matrix:
+        os: [macos-latest]
+        python-version: ["3.11", "3.12"]
+        include:
+          - os: "macos-latest"
+            python-version: "native"
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        if: matrix.python-version != 'native'
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: venv
+        run: |
+          python3 -m venv .venv
+          .venv/bin/pip3 install --upgrade pip
+          .venv/bin/pip3 install build
+      - name: build
+        run: |
+          .venv/bin/python3 -m build --wheel
+      - name: install
+        run: |
+          .venv/bin/pip3 install --no-index -f . pymicro-vad
+      - name: test
+        run: |
+          .venv/bin/pip3 install pytest
+          .venv/bin/pytest -vv tests
