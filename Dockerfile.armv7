@@ -129,7 +129,7 @@ FROM scratch
 ARG TARGETARCH
 ARG TARGETVARIANT
 
-COPY --from=python39 /build/dist/*.whl ./
-COPY --from=python310 /build/dist/*.whl ./
-COPY --from=python311 /build/dist/*.whl ./
-COPY --from=python312 /build/dist/*.whl ./
+COPY --from=python39 /build/wheelhouse/*.whl ./
+COPY --from=python310 /build/wheelhouse/*.whl ./
+COPY --from=python311 /build/wheelhouse/*.whl ./
+COPY --from=python312 /build/wheelhouse/*.whl ./
