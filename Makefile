@@ -36,9 +36,9 @@ amd64:
 arm64:
 	docker buildx build . --platform linux/arm64 --output 'type=local,dest=dist/linux_arm64'
 
-armv6:
-	mkdir -p dist/linux_armv6
-	docker buildx build . -f Dockerfile.armv6 --platform linux/arm/v6 --output 'type=local,dest=dist/linux_armv6'
+# armv6:
+# 	mkdir -p dist/linux_armv6
+# 	docker buildx build . -f Dockerfile.armv6 --platform linux/arm/v6 --output 'type=local,dest=dist/linux_armv6'
 
 armv7:
 	mkdir -p dist/linux_armv7
