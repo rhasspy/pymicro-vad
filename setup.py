@@ -12,7 +12,7 @@ _FRONTEND_DIR = (
 _KISSFFT_DIR = _MICROVAD_DIR / "kissfft"
 _INCLUDE_DIR = _MICROVAD_DIR
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 
 sources = [_MICROVAD_DIR / "micro_vad.cpp"]
 sources.extend(
