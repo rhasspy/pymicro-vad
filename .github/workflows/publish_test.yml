@@ -1,0 +1,190 @@
+---
+name: Release Dry Run (PyPI + GitHub)
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
+      file_ver: ${{ steps.read_ver.outputs.file_ver }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # IMPORTANT: get full history + tags
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Install build tools
+        run: pip install build
+
+      - name: Extract latest version tag (semver)
+        id: tag
+        shell: bash
+        run: |
+          # Ensure we have tags (checkout with fetch-depth: 0 usually gets them)
+          git fetch --tags --force --quiet
+
+          # List tags in descending semantic order. v-prefixed and bare tags supported.
+          # Filter to tags that look like v1.2.3 or 1.2.3 (3-part semver).
+          mapfile -t TAGS < <(git tag --list --sort=-v:refname)
+          LATEST=""
+          for t in "${TAGS[@]}"; do
+            if [[ "$t" =~ ^v?[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+              LATEST="$t"
+              break
+            fi
+          done
+
+          if [ -z "$LATEST" ]; then
+            echo "❌ No semver-like tags found (expected tags like v1.2.3 or 1.2.3)" >&2
+            exit 1
+          fi
+
+          # Strip leading 'v' for comparison to setup.py version
+          STRIPPED="${LATEST#v}"
+
+          echo "Found latest tag: $LATEST (stripped: $STRIPPED)"
+          echo "raw_tag=$LATEST" >> "$GITHUB_OUTPUT"
+          echo "tag=$STRIPPED" >> "$GITHUB_OUTPUT"
+      - name: Get version from setup.py
+        id: read_ver
+        shell: python
+        run: |
+          import os, re, pathlib
+          text = pathlib.Path("setup.py").read_text()
+          m = re.search(r"version\s*=\s*[\"']([^\"']+)[\"']", text)
+          ver = m.group(1)
+          with open(os.environ["GITHUB_OUTPUT"], "a") as fh:
+              fh.write(f"file_ver={ver}\n")
+          print(f"setup.py version: {ver}")
+
+      - name: Verify latest tag matches setup.py version
+        shell: bash
+        run: |
+          TAG="${{ steps.tag.outputs.tag }}"
+          FILE_VER="${{ steps.read_ver.outputs.file_ver }}"
+          echo "Latest tag (stripped): $TAG"
+          echo "setup.py:              $FILE_VER"
+          if [ "$TAG" != "$FILE_VER" ]; then
+            echo "❌ Latest tag ($TAG) != setup.py ($FILE_VER)"
+            exit 1
+          fi
+
+      - name: Build dists
+        run: python -m build
+
+      - name: Upload dists
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/*
+
+  changelog:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Extract release notes (fail if missing)
+        id: notes
+        shell: python
+        env:
+          TAG: ${{ needs.build.outputs.tag }}
+        run: |
+          import os, sys, re, pathlib
+
+          ver = os.environ["TAG"]                          # e.g., 1.0.2 (no leading 'v')
+          chlog_path = pathlib.Path("CHANGELOG.md")
+          if not chlog_path.exists():
+              print("CHANGELOG.md not found", file=sys.stderr)
+              sys.exit(2)
+
+          lines = chlog_path.read_text(encoding="utf-8").splitlines()
+
+          # Normalize heading lines and find the exact "## ..." that matches this version
+          # Supports: "## 1.0.2", "## v1.0.2", "## [1.0.2]", "## [1.0.2] - 2025-10-06"
+          def is_heading_for_version(s: str) -> bool:
+              s = s.strip()
+              if not s.startswith("##"):
+                  return False
+              s = s[2:].strip()            # drop leading '##'
+              s = s.strip("[]")            # allow [1.0.2]
+              s = re.sub(r"\s*-\s*.*$", "", s)  # drop trailing " - date"
+              s = s.lstrip("v")            # allow v1.0.2
+              return s == ver
+
+          start_idx = None
+          for i, line in enumerate(lines):
+              if is_heading_for_version(line):
+                  start_idx = i + 1        # start AFTER the heading line
+                  break
+
+          if start_idx is None:
+              print(f"No changelog section found for {ver}", file=sys.stderr)
+              sys.exit(3)
+
+          # Collect until the next "## " heading (any version)
+          end_idx = len(lines)
+          for j in range(start_idx, len(lines)):
+              if lines[j].lstrip().startswith("## "):
+                  end_idx = j
+                  break
+
+          section_lines = lines[start_idx:end_idx]
+
+          # Trim leading/trailing blank lines but KEEP all bullets, including the first one
+          while section_lines and not section_lines[0].strip():
+              section_lines.pop(0)
+          while section_lines and not section_lines[-1].strip():
+              section_lines.pop()
+
+          section = "\n".join(section_lines)
+
+          # Consider invalid if empty or only reference-style link defs
+          only_links = re.fullmatch(r"(?:\[[^\]]+\]:\s*\S+\s*(?:\n|$))*", section or "", flags=re.MULTILINE)
+          if not section or only_links:
+              print(f"Changelog section for {ver} is empty", file=sys.stderr)
+              sys.exit(4)
+
+          pathlib.Path("RELEASE_NOTES.md").write_text(section, encoding="utf-8")
+
+      - name: Upload notes
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-notes
+          path: RELEASE_NOTES.md
+
+  dry_run_publish:
+    needs: [build, changelog]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-notes
+          path: .
+      - name: Print dry-run summary
+        run: |
+          echo "✅ Would publish to PyPI via Trusted Publisher (OIDC)"
+          echo "   Latest tag (raw): ${{ steps.fetch_latest_tag.outputs.raw_tag }}"
+          echo "   Tag (stripped):   ${{ needs.build.outputs.tag }}"
+          echo "   Version:          ${{ needs.build.outputs.file_ver }}"
+          echo "   Dist files:"
+          ls -lh dist
+          echo
+          echo "✅ Would create GitHub Release for tag ${{ steps.fetch_latest_tag.outputs.raw_tag }}"
+          echo "   Using changelog notes from RELEASE_NOTES.md:"
+          echo "---------------------------------------------"
+          cat RELEASE_NOTES.md
+          echo "---------------------------------------------"
+          echo "(Dry run complete — nothing was uploaded.)"
