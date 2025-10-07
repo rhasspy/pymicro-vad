@@ -1,6 +1,6 @@
 import wave
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 from pymicro_vad import MicroVad
 
@@ -19,18 +19,19 @@ def read_wav(file_name: str) -> bytes:
         return wav_file.readframes(wav_file.getnframes())
 
 
-def run_vad(file_name: str) -> List[float]:
+def run_vad(file_name: str, vad: Optional[MicroVad] = None) -> List[float]:
     """Run VAD on WAV file and return speech probabiltiies."""
     probs: List[float] = []
-    vad = MicroVad()
+    if vad is None:
+        vad = MicroVad()
     audio = read_wav(file_name)
     i = 0
     while (i + BYTES_PER_CHUNK) < len(audio):
         chunk = audio[i : i + BYTES_PER_CHUNK]
-        prob = vad.Process10ms(chunk)
+        prob = vad.process_10ms(chunk)
         if prob >= 0:
             # Only keep valid probabilities.
-            # Process10ms returns -1 if more audio is needed.
+            # process_10ms returns -1 if more audio is needed.
             probs.append(prob)
         i += BYTES_PER_CHUNK
 
@@ -78,3 +79,18 @@ def test_speech() -> None:
     # Each chunk is 10ms.
     assert (end_i - start_i) > 100
     assert (end_i - start_i) < 150
+
+
+def test_reset() -> None:
+    """Test VAD reset"""
+    vad = MicroVad()
+    probs1 = run_vad("speech.wav", vad)
+    probs2 = run_vad("speech.wav", vad)
+
+    # Probabilities are different due to maintained state
+    assert probs1 != probs2
+
+    # Same state after reset
+    vad.reset()
+    probs3 = run_vad("speech.wav", vad)
+    assert probs1 == probs3

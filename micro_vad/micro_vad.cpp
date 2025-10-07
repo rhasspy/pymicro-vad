@@ -29,6 +29,11 @@ void MicroVad::Reset() {
   this->samples_read = 0;
   this->input_offset = 0;
   this->input_features_left = INPUT_FEATURES;
+
+  // Reset frontend
+  FrontendFreeStateContents(&this->frontend_state);
+  FrontendPopulateState(&this->frontend_config, &this->frontend_state,
+                        AUDIO_SAMPLE_FREQUENCY);
 }
 
 FloatType MicroVad::Process10ms(int16_t *samples) {

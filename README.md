@@ -19,9 +19,9 @@ vad = MicroVad()
 threshold = 0.5
 
 # Process 10ms chunks of 16-bit mono PCM @16Khz
-while audio := get_10ms_of_audio():
+while audio := get_10ms_of_audio():  # you define this
     assert len(audio) == 160 * 2  # 160 samples
-    speech_prob = vad.Process10ms(audio)
+    speech_prob = vad.process_10ms(audio)
     if speech_prob < 0:
         print("Need more audio")
     elif speech_prob > threshold:
