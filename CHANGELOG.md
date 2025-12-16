@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.0.1
+
+- Include `src/micro_vad.cpp` in sdist
+- Add `py.typed`
+
 ## v2.0.0
 
 - Change `Process10ms` to `process_10ms`
