@@ -7,6 +7,10 @@ KISSFFT_DIR := $(MICROVAD_DIR)/kissfft
 all: main.cpp
 	g++ -o main main.cpp \
       -O3 \
+      -funroll-loops \
+      -fno-math-errno \
+      -flto \
+      -s \
       -DFIXED_POINT=16 \
       $(MICROVAD_DIR)/micro_vad.cpp \
       $(FRONTEND_DIR)/kiss_fft_int16.cc \
