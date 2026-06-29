@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.1.0
+
+- Add optimization flags
+
 ## v2.0.1
 
 - Include `src/micro_vad.cpp` in sdist

@@ -11,7 +11,7 @@ _FRONTEND_DIR = (
 _KISSFFT_DIR = _MICROVAD_DIR / "kissfft"
 _INCLUDE_DIR = _MICROVAD_DIR
 
-version = "2.0.1"
+version = "2.1.0"
 
 sources = [_MICROVAD_DIR / "micro_vad.cpp"]
 sources.extend(
@@ -38,13 +38,26 @@ sources.extend(
 sources.append(_KISSFFT_DIR / "kiss_fft.cc")
 sources.append(_KISSFFT_DIR / "tools" / "kiss_fftr.cc")
 
-flags = ["-DFIXED_POINT=16"]
+# Portability-neutral codegen optimizations only.
+# These change how baseline instructions are scheduled/inlined; they do NOT
+# raise the instruction-set floor (no -march/-mtune), so wheels keep running
+# on the widest range of CPUs. -ffast-math is intentionally omitted: without
+# it, -O3 output is bit-identical to -O2 (no FP reduction reordering).
+flags = [
+    "-DFIXED_POINT=16",
+    "-O3",
+    "-funroll-loops",
+    "-fno-math-errno",
+    "-flto",
+]
+link_flags = ["-flto", "-s"]
 ext_modules = [
     Extension(
         name="micro_vad_cpp",
         language="c++",
         py_limited_api=True,
         extra_compile_args=flags,
+        extra_link_args=link_flags,
         sources=sorted(
             [str(p) for p in sources] + [str(_DIR / "src" / "micro_vad.cpp")]
         ),
