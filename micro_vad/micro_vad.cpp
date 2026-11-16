@@ -1,5 +1,7 @@
 #include "micro_vad.h"
 
+#include <algorithm>
+
 #define FLOAT32_SCALE 0.0390625
 
 namespace micro_vad {
@@ -73,8 +75,14 @@ FloatType MicroVad::Process10ms(int16_t *samples) {
   this->conv_2d_7_output.fill({0});
   this->fc_8_output.fill({0});
 
+  // Present the ring's oldest feature first to the non-streaming network.
+  auto ordered_input = this->conv_2d_1_input;
+  std::rotate(ordered_input[0].begin(),
+              ordered_input[0].begin() + this->input_offset,
+              ordered_input[0].end());
+
   // Run network
-  conv_2d_s3(this->conv_2d_1_input, CONV_2D_1_filter, CONV_2D_1_bias,
+  conv_2d_s3(ordered_input, CONV_2D_1_filter, CONV_2D_1_bias,
              this->conv_2d_1_output);
   depthwise_conv_2d_s1(this->conv_2d_1_output, DEPTHWISE_CONV_2D_2_filter,
                        DEPTHWISE_CONV_2D_2_bias, this->dconv_2d_2_output);
