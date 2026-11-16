@@ -1,6 +1,6 @@
 #include "micro_vad.h"
 
-#include <algorithm>
+#include <cstring>
 
 #define FLOAT32_SCALE 0.0390625
 
@@ -76,10 +76,18 @@ FloatType MicroVad::Process10ms(int16_t *samples) {
   this->fc_8_output.fill({0});
 
   // Present the ring's oldest feature first to the non-streaming network.
-  auto ordered_input = this->conv_2d_1_input;
-  std::rotate(ordered_input[0].begin(),
-              ordered_input[0].begin() + this->input_offset,
-              ordered_input[0].end());
+  // Copies [offset, end) then [0, offset) so the data is moved only once.
+  decltype(this->conv_2d_1_input) ordered_input;
+  {
+    const auto &ring = this->conv_2d_1_input[0];
+    auto &ordered = ordered_input[0];
+    const std::size_t row_bytes = sizeof(ring[0]);
+    const std::size_t tail = INPUT_FEATURES - this->input_offset;
+    std::memcpy(ordered.data(), ring.data() + this->input_offset,
+                tail * row_bytes);
+    std::memcpy(ordered.data() + tail, ring.data(),
+                this->input_offset * row_bytes);
+  }
 
   // Run network
   conv_2d_s3(ordered_input, CONV_2D_1_filter, CONV_2D_1_bias,
